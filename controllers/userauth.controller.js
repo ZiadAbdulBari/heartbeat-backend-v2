@@ -25,21 +25,22 @@ const userRegistration = async (req, res) => {
       password: password,
       role: req.body.role,
     });
+    const newUser = await user.save();
     let createProfile = new Profile({
       name: req.body.name,
       email: req.body.email,
       role: req.body.role,
+      user_id:newUser._id,
     })
     await createProfile.save();
-    await user.save();
     return res.status(200).json({
       status: 200,
-      mgs: "successfully created",
+      message: "successfully created",
     });
   } catch (error) {
     return res.status(500).json({
       status: 500,
-      mgs: "server error",
+      message: "server error",
     });
   }
 };
@@ -61,22 +62,28 @@ const userLogin = async (req, res) => {
           },
           process.env.JWT_TOKEN
         );
-        res.status(200).json({
+        return res.status(200).json({
+          status:200,
           access_token: token,
+          user_id:checkEmail[0]._id,
+          role:checkEmail[0].role,
           mgs: "logged in",
         });
       } else {
-        res.status(401).json({
+        return res.status(401).json({
+          status:401,
           mgs: "Failed",
         });
       }
     } else {
-      res.status(401).json({
+      return res.status(401).json({
+        status:401,
         mgs: "Authentication failed",
       });
     }
   } catch {
-    res.status(500).json({
+    return res.status(500).json({
+      status:500,
       mgs: "Server error",
     });
   }

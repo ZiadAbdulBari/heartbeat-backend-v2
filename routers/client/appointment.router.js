@@ -10,7 +10,7 @@ const {
 const tokenCheck = require("../../middleware/token-checker");
 
 router.post("/schedule-check/:id", checkAvailability);
-router.post("/make-appointment", createdAppointment);
+router.post("/make-appointment",tokenCheck, createdAppointment);
 router.get("/get-appointment-list/:id", getAppointmentList);
 router.get("/patient-history", patientHistory);
 router.post("/edit-status/:id", changeAppointmentStatus);

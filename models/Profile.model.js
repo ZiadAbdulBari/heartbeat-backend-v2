@@ -46,6 +46,10 @@ const profile = new mongoose.Schema({
         type: String,
         required: false
     },
+    user_id:{
+        type:String,
+        required:true
+    }
 }) 
 
 module.exports = new mongoose.model('Profile',profile);

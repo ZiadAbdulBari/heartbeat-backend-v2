@@ -1,9 +1,13 @@
 const mongooes = require('mongoose');
 
 const appointment = new mongooes.Schema({
-    user_name:{
+    // user_name:{
+    //     type:String,
+    //     required:false
+    // },
+    user_id:{
         type:String,
-        required:false
+        required:true
     },
     doctor_name:{
         type:String,
@@ -18,10 +22,6 @@ const appointment = new mongooes.Schema({
         required:true,
     },
     patient_name:{
-        type:String,
-        required:true
-    },
-    patient_id:{
         type:String,
         required:true
     },
