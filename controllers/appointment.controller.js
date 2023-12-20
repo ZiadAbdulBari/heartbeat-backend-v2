@@ -22,12 +22,12 @@ const checkAvailability = async (req, res) => {
     const date = new Date(req.body.date);
     const dayNo = date.getDay();
     const day = weekDays[dayNo];
-    const doctor = await Profile.findOne({ user_id: req.params.id });
+    const doctor = await Profile.findOne({ user_id: req.body.id });
     const seletedDay = doctor.available.filter((d) => d.day == day)[0];
     if (seletedDay?.day == day) {
       const patient = parseInt(seletedDay.limit);
       const totalNumberOfPatient = await Appointment.find({
-        doctor_id: req.params.id,
+        doctor_id: req.body.id,
         chosen_date: req.body.date,
       });
       if (patient == totalNumberOfPatient.length) {
@@ -90,27 +90,83 @@ const createdAppointment = async (req, res) => {
   }
 };
 const getAppointmentList = async (req, res) => {
-  if (req.method == "get" || req.method == "GET") {
-    const list = await Appointment.find({
-      doctor_id: req.params.id,
-      chosen_date: req.query.date,
+  if (req.method != "GET") {
+    return res.status(405).json({
+      status: 405,
+      message: "Method is not allowed",
     });
-    res.status(200).json({
+  }
+  try{
+    const list = await Appointment.find({
+      doctor_id: req.id,
+      chosen_date: new Date(req.query.date),
+    });
+    return res.status(200).json({
+      status:200,
       data: list,
     });
-  } else {
-    res.status(405).json({
-      status: 405,
-      mgs: "method not allowed",
+  }
+  catch(error){
+    return res.status(500).json({
+      status: 500,
+      message: error,
     });
   }
 };
 const patientHistory = async (req, res) => {
-  if (req.method == "get" || req.method == "GET") {
-    const list = await Appointment.find({ patient_id: req.id });
-    res.status(200).json({ list });
-  } else {
-    res.status(500);
+  if (req.method != "GET") {
+    return res.status(405).json({
+      status: 405,
+      message: "Method is not allowed",
+    });
+  }
+  try{
+    let list = [];
+    if(req.query.date=='false'){
+      list = await Appointment.find({ patient_id: req.id });
+    }
+    else if(req.query.date!='false'){
+      list = await Appointment.find({ patient_id: req.id, chosen_date:req.query.date });
+    }
+    return res.status(200).json({ 
+      status:200,
+      list 
+    });
+
+  }
+  catch(error){
+    return res.status(500).json({
+      status:500,
+      message:error
+    })
+  }
+};
+const doctorHistory = async (req, res) => {
+  if (req.method != "GET") {
+    return res.status(405).json({
+      status: 405,
+      message: "Method is not allowed",
+    });
+  }
+  try{
+    let list = [];
+    if(req.query.date=='false'){
+      list = await Appointment.find({ doctor_id: req.id });
+    }
+    else if(req.query.date!='false'){
+      list = await Appointment.find({ doctor_id: req.id,chosen_date:req.query.date });
+    }
+    return res.status(200).json({ 
+      status:200,
+      list 
+    });
+
+  }
+  catch(error){
+    return res.status(500).json({
+      status:500,
+      message:error
+    })
   }
 };
 const changeAppointmentStatus = async (req, res) => {
@@ -142,4 +198,5 @@ module.exports.checkAvailability = checkAvailability;
 module.exports.createdAppointment = createdAppointment;
 module.exports.getAppointmentList = getAppointmentList;
 module.exports.patientHistory = patientHistory;
+module.exports.doctorHistory = doctorHistory;
 module.exports.changeAppointmentStatus = changeAppointmentStatus;
