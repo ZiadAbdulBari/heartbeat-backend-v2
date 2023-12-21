@@ -15,7 +15,7 @@ router.post("/make-appointment",tokenCheck, createdAppointment);
 router.get("/get-appointment-list",tokenCheck, getAppointmentList);
 router.get("/patient-history", tokenCheck, patientHistory);
 router.get("/doctor-history", tokenCheck, doctorHistory);
-router.post("/edit-status/:id", changeAppointmentStatus);
+router.post("/edit-status", changeAppointmentStatus);
 // router.post("/change-status/:doctorId", patientCall);
 // router.get("/liveupdate/:id", liveUpdate);
 

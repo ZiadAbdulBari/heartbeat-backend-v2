@@ -2,6 +2,7 @@ const { compareSync } = require("bcrypt");
 const Appointment = require("../models/Appointment.model");
 const Auth = require("../models/Auth.model");
 const Profile = require("../models/Profile.model");
+const io = require("../socket");
 const checkAvailability = async (req, res) => {
   if (req.method != "POST") {
     return res.status(405).json({
@@ -171,26 +172,30 @@ const doctorHistory = async (req, res) => {
 };
 const changeAppointmentStatus = async (req, res) => {
   try {
-    const list = await Appointment.findOne({ _id: req.params.id });
+    const list = await Appointment.findOne({ _id: req.body.id });
     if (
       list.status == "completed" ||
       list.status == "Completed" ||
       list.status == "cancel" ||
       list.status == "Cancel"
     ) {
-      res.status(200).json({
-        mgs: "can't change the status",
+      return res.status(200).json({
+        status:200,
+        message: "Can't change the status",
       });
     }
     console.log("chole ashche");
     list.status = req.body.status;
-    await list.save();
-    res.status(200).json({
-      mgs: "ststus changed successfully",
+    const callingPatient = await list.save();
+    return res.status(200).json({
+      status:200,
+      message: "Status changed successfully",
+      data:callingPatient
     });
   } catch (error) {
-    res.status(500).json({
-      mgs: "Server error",
+    return res.status(500).json({
+      status:500,
+      message: error,
     });
   }
 };

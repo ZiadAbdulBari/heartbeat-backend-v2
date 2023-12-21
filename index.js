@@ -43,10 +43,10 @@ mongoose
   .then((result) => {
     const PORT = process.env.PORT || 4000;
     const server = app.listen(PORT);
-    const io = require("./socket").init(server);
-    io.on("connection", socket => {
-      console.log("Socket Connected");
-    });
+    // const io = require("./socket").init(server);
+    // io.on("connection", socket => {
+    //   console.log("Socket Connected");
+    // });
   })
   .catch((error) => {
     console.log(error);
